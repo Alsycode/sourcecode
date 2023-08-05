@@ -1,3 +1,5 @@
+ 
+
 import React, { useState, useEffect } from "react";
 import Header from "../layout/header-3";
 import Footer from "./../layout/footer";
@@ -37,32 +39,29 @@ function BlogLargeRightSidebar() {
     fetchBlogContents();
   }, []);
 
-  // Filter the blogs based on the searchQuery
-  const filteredBlogs = blogs.filter((blog) => {
-    const fieldToSearch =
-      blog.attributes.blogFieldToSearch?.toLowerCase() || "";
-    const searchTerm = searchQuery.toLowerCase();
-    return fieldToSearch.includes(searchTerm);
-  });
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    fetchBlogContents();
+  };
 
-  // Calculate the total number of pages based on the filtered blogs
+const handleSearchChange = (e) => {
+  const searchValue = e.target.value;
+  setSearchQuery(searchValue);
+  setCurrentPage(1); // Reset the current page when the search query changes
+};
+const filteredBlogs = blogs.filter((blog) => {
+  const fieldToSearch = blog.attributes.topic?.toLowerCase() || ""; // Update to the correct field for searching (e.g., "topic")
+  const searchTerm = searchQuery.toLowerCase();
+  return fieldToSearch.includes(searchTerm);
+});
+
   const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
 
-  // Update the currentBlogs with the filtered and paginated results
   const currentBlogs = filteredBlogs.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  const handleSearchChange = (e) => {
-    // Check if the Enter key is pressed (key code 13)
-    if (e.keyCode === 13) {
-      setSearchQuery(e.target.value);
-      setCurrentPage(1); // Reset the page to the first page when the search query changes
-    }
-  };
   const handlePageChange = (page) => {
-    // Avoid exceeding the total number of pages
     if (page < 1) {
       page = 1;
     } else if (page > totalPages) {
@@ -104,7 +103,7 @@ function BlogLargeRightSidebar() {
           <div className="container">
             <div className="row">
               <div className="col-xl-8 col-lg-8 m-b50">
-                {filteredBlogs.map((blog) => (
+                {currentBlogs.map((blog) => (
                   <div
                     className="dlab-blog style-1 bg-white text-center m-b50"
                     key={blog.id}
@@ -168,63 +167,69 @@ function BlogLargeRightSidebar() {
                   </div>
                 ))}
 
-                <nav aria-label="Blog Pagination">
-                  <ul className="pagination text-center p-t20">
-                    <li
-                      className={`page-item ${
-                        currentPage === 1 ? "disabled" : ""
-                      }`}
-                    >
-                      <Link href="#">
-                        <a
-                          className="page-link prev"
-                          onClick={() => handlePageChange(currentPage - 1)}
-                        >
-                          Prev
-                        </a>
-                      </Link>
-                    </li>
+<nav aria-label="Blog Pagination">
+  <ul className="pagination text-center p-t20">
+    <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+      <Link href="#">
+        <a
+          className="page-link prev"
+          onClick={() => handlePageChange(currentPage - 1)}
+        >
+          Prev
+        </a>
+      </Link>
+    </li>
+    {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNum) => (
+      <li
+        key={pageNum}
+        className={`page-item ${currentPage === pageNum ? "active" : ""}`}
+      >
+        <Link href="#">
+          <a
+            className="page-link"
+            onClick={() => handlePageChange(pageNum)}
+          >
+            {pageNum}
+          </a>
+        </Link>
+      </li>
+    ))}
+    <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
+      <Link href="#">
+        <a
+          className="page-link next"
+          onClick={() => handlePageChange(currentPage + 1)}
+        >
+          Next
+        </a>
+      </Link>
+    </li>
+  </ul>
+</nav>
 
-                    <li
-                      className={`page-item ${
-                        currentPage === totalPages ? "disabled" : ""
-                      }`}
-                    >
-                      <Link href="#">
-                        <a
-                          className="page-link next"
-                          onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                          Next
-                        </a>
-                      </Link>
-                    </li>
-                  </ul>
-                </nav>
               </div>
               <div className="col-xl-4 col-lg-4 m-b30">
                 <aside className="side-bar sticky-top">
                   <div className="widget widget_search">
                     <h2 className="widget-title">Search</h2>
-                    <form className="dlab-form">
-                      <div className="input-group">
-                        <input
-                          type="text"
-                          className="form-control"
-                          placeholder="Search blogs..."
-                          value={searchQuery}
-                          onChange={(e) => {
-                            setSearchQuery(e.target.value);
-                            handleSearchChange();
-                          }}
-                        />
-                        <span className="input-group-btn">
-                          <button className="btn btn-primary" type="submit">
-                            <i className="ti-search"></i>
-                          </button>
-                        </span>
-                      </div>
-                    </form>
+                    <form className="dlab-form" onSubmit={handleSearchSubmit}>
+  <div className="input-group">
+    <input
+      type="text"
+      className="form-control"
+      placeholder="Search blogs..."
+      name="search" // Add a name attribute to the input field
+      value={searchQuery}
+      onChange={handleSearchChange} // Call handleSearchChange on input change
+    />
+    <span className="input-group-btn">
+      <button className="btn btn-primary" type="submit">
+        <i className="ti-search"></i>
+      </button>
+    </span>
+  </div>
+</form>
+
                   </div>
                   <div className="widget widget_archive">
                     <h2 className="widget-title">Category</h2>
@@ -266,7 +271,7 @@ function BlogLargeRightSidebar() {
                       </li>
                     </ul>
                   </div>
-                  <div className="widget recent-posts-entry">
+                 <div className="widget recent-posts-entry">
                     <h2 className="widget-title">Recent Posts</h2>
                     <div className="widget-post-bx">
                       {currentBlogs.slice(0, 4).map((blog) => (
@@ -390,7 +395,7 @@ function BlogLargeRightSidebar() {
           </div>
         </section>
 
-        <section
+ <section
           style={{
             backgroundImage: "url(images/background/bg5.jpg)",
             backgroundSize: "cover",
@@ -426,8 +431,7 @@ function BlogLargeRightSidebar() {
             </div>
           </div>
         </section>
-      </div>
-      <Footer />
+      </div>      <Footer />
     </>
   );
 }

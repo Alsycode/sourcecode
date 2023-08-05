@@ -30,10 +30,10 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/blog-large-right-sidebar": [
+    "/contact-us-1": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/blog-large-right-sidebar.js"
+      "static/chunks/pages/contact-us-1.js"
     ]
   },
   "ampFirstPages": []

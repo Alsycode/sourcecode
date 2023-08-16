@@ -70,7 +70,7 @@ function Team1() {
           style={{ backgroundImage: "url(images/background/bg1.png)" }}
         >
           <div className="container">
-            <div className="row">
+            <div className="row flex justify-center px-10">
             {data.length > 0 ? (
           // Mapping over the 'data' state and rendering each blog item as a slide
           data.map((blog) => (

@@ -80,7 +80,7 @@ function TeamSlider() {
           // Mapping over the 'data' state and rendering each blog item as a slide
           data.map((blog) => (
             <div className="item wow fadeInUp" key={blog.id} data-wow-duration="2s" data-wow-delay="0.1s">
-              <div className="dlab-team style-1 m-b10">
+              <div className="dlab-team style-1 m-b10" key={blog.id}>
                 {/* Rendering the blog photo using Next.js Image component */}
                 <div className="dlab-media">
                   <Image
@@ -100,7 +100,7 @@ function TeamSlider() {
                   </div>
                   {/* Rendering social media icons */}
                   <ul className="dlab-social-icon primary-light">
-                    <li>
+                    <li >
                       <a href="https://en-gb.facebook.com/" className="fa fa-facebook"></a>
                     </li>
                     <li>

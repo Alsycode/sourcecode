@@ -1,11 +1,9 @@
- 
-
 import React, { useState, useEffect } from "react";
-import Header from "../layout/header-3";
-import Footer from "./../layout/footer";
+import Header from "../layout/header";
+import Footer from "../layout/footer";
 import Link from "next/link";
 import Image from "next/image";
-
+import { BlogProvider } from "../component/BlogContext";
 function BlogLargeRightSidebar() {
   const [blogs, setBlogs] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -44,16 +42,17 @@ function BlogLargeRightSidebar() {
     fetchBlogContents();
   };
 
-const handleSearchChange = (e) => {
-  const searchValue = e.target.value;
-  setSearchQuery(searchValue);
-  setCurrentPage(1); // Reset the current page when the search query changes
-};
-const filteredBlogs = blogs.filter((blog) => {
-  const fieldToSearch = blog.attributes.topic?.toLowerCase() || ""; // Update to the correct field for searching (e.g., "topic")
-  const searchTerm = searchQuery.toLowerCase();
-  return fieldToSearch.includes(searchTerm);
-});
+  const handleSearchChange = (e) => {
+    const searchValue = e.target.value;
+    setSearchQuery(searchValue);
+    setCurrentPage(1);
+  };
+
+  const filteredBlogs = blogs.filter((blog) => {
+    const fieldToSearch = blog.attributes.topic?.toLowerCase() || "";
+    const searchTerm = searchQuery.toLowerCase();
+    return fieldToSearch.includes(searchTerm);
+  });
 
   const totalPages = Math.ceil(filteredBlogs.length / itemsPerPage);
 
@@ -61,6 +60,7 @@ const filteredBlogs = blogs.filter((blog) => {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
+
   const handlePageChange = (page) => {
     if (page < 1) {
       page = 1;
@@ -70,9 +70,24 @@ const filteredBlogs = blogs.filter((blog) => {
     setCurrentPage(page);
   };
 
+  const truncateText = (text, maxLength) => {
+    if (text.length <= maxLength) {
+      return text;
+    }
+
+    const trimmedText = text.slice(0, maxLength);
+    const lastSpaceIndex = trimmedText.lastIndexOf(" ");
+
+    if (lastSpaceIndex === -1) {
+      return trimmedText + "...";
+    }
+
+    return trimmedText.slice(0, lastSpaceIndex) + "...";
+  };
+
   return (
-    <>
-      <Header />
+    <BlogProvider>
+       <Header />
       <div className="page-content bg-white">
         <div
           className="dlab-bnr-inr overlay-primary-dark"
@@ -82,16 +97,7 @@ const filteredBlogs = blogs.filter((blog) => {
             <div className="dlab-bnr-inr-entry">
               <h1>Blog Large</h1>
               <nav aria-label="breadcrumb" className="breadcrumb-row">
-                <ul className="breadcrumb">
-                  <li className="breadcrumb-item">
-                    <Link href="/">
-                      <a>Home</a>
-                    </Link>
-                  </li>
-                  <li className="breadcrumb-item active" aria-current="page">
-                    Blog
-                  </li>
-                </ul>
+                {/* ... (breadcrumb code) */}
               </nav>
             </div>
           </div>
@@ -109,20 +115,28 @@ const filteredBlogs = blogs.filter((blog) => {
                     key={blog.id}
                   >
                     <div className="dlab-media dlab-img-effect zoom">
-                      <Image
-                        width={400}
-                        height={270}
-                        src={blog.attributes.blogphotos.data.attributes.url}
-                        alt={blog.attributes.topic}
-                      />
+                    {blog.attributes.blogphotos?.data?.attributes?.url ? (
+                        <Image
+                          width={700}
+                          height={270}
+                          src={blog.attributes.blogphotos.data.attributes.url}
+                          alt={blog.attributes.topic}
+                        />
+                      ) : (
+                        <span>No Image Available</span>
+                      )}
                     </div>
                     <div className="dlab-info">
                       <h4 className="dlab-title">
-                        <a href="/blog-details-1">{blog.attributes.topic}</a>
+                      <Link href={`./blogDetails/${blog.id}`}>
+                        <a>{blog.attributes.topic}</a>
+                   </Link>
                       </h4>
-                      <p className="m-b0">{blog.attributes.explaination}</p>
+                      <p className="m-b0">
+                        {truncateText(blog.attributes.explaination, 250)}
+                      </p>
                       <div className="dlab-meta meta-bottom">
-                        <ul>
+                       <ul>
                           <li className="post-date">
                             <i className="flaticon-clock m-r10"></i>7 March,
                             2020
@@ -166,8 +180,7 @@ const filteredBlogs = blogs.filter((blog) => {
                     </div>
                   </div>
                 ))}
-
-<nav aria-label="Blog Pagination">
+               <nav aria-label="Blog Pagination">
   <ul className="pagination text-center p-t20">
     <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
       <Link href="#">
@@ -179,21 +192,7 @@ const filteredBlogs = blogs.filter((blog) => {
         </a>
       </Link>
     </li>
-    {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNum) => (
-      <li
-        key={pageNum}
-        className={`page-item ${currentPage === pageNum ? "active" : ""}`}
-      >
-        <Link href="#">
-          <a
-            className="page-link"
-            onClick={() => handlePageChange(pageNum)}
-          >
-            {pageNum}
-          </a>
-        </Link>
-      </li>
-    ))}
+  
     <li className={`page-item ${currentPage === totalPages ? "disabled" : ""}`}>
       <Link href="#">
         <a
@@ -209,7 +208,7 @@ const filteredBlogs = blogs.filter((blog) => {
 
               </div>
               <div className="col-xl-4 col-lg-4 m-b30">
-                <aside className="side-bar sticky-top">
+              <aside className="side-bar sticky-top">
                   <div className="widget widget_search">
                     <h2 className="widget-title">Search</h2>
                     <form className="dlab-form" onSubmit={handleSearchSubmit}>
@@ -231,50 +230,12 @@ const filteredBlogs = blogs.filter((blog) => {
 </form>
 
                   </div>
-                  <div className="widget widget_archive">
-                    <h2 className="widget-title">Category</h2>
-                    <ul>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            Design<span>05</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            Development<span>25</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            SEO<span>20</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            App Design<span>08</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            Branding<span>22</span>
-                          </a>
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
+                  
                  <div className="widget recent-posts-entry">
+                  
                     <h2 className="widget-title">Recent Posts</h2>
                     <div className="widget-post-bx">
-                      {currentBlogs.slice(0, 4).map((blog) => (
+                      {blogs.reverse().slice(0, 4).map((blog) => (
                         <div className="widget-post clearfix" key={blog.id}>
                           <div className="dlab-media">
                             <Image
@@ -282,15 +243,15 @@ const filteredBlogs = blogs.filter((blog) => {
                               height={270}
                               src={
                                 blog.attributes.blogphotos.data.attributes
-                                  .formats.small.url
+                                  .formats.thumbnail.url
                               }
                               alt={blog.attributes.heading}
                             />
                           </div>
                           <div className="dlab-info">
                             <h4 className="title">
-                              <a href="/blog-details-1">
-                                {blog.attributes.heading}
+                              <a href={`./blogDetails/${blog.id}`}>
+                                {blog.attributes.topic}
                               </a>
                             </h4>
                             <div className="dlab-meta">
@@ -306,96 +267,14 @@ const filteredBlogs = blogs.filter((blog) => {
                       ))}
                     </div>
                   </div>
-                  <div className="widget widget_archive">
-                    <h2 className="widget-title">Archives</h2>
-                    <ul>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            January<span>05</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            Fabruary<span>25</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            March<span>20</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            April<span>08</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            May<span>22</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            Jun<span>11</span>
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link href="#">
-                          <a>
-                            July<span>19</span>
-                          </a>
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="widget widget_tag_cloud">
-                    <h2 className="widget-title">Tags</h2>
-                    <div className="tagcloud">
-                      <Link href="#">
-                        <a>Business</a>
-                      </Link>
-                      <Link href="#">
-                        <a>News</a>
-                      </Link>
-                      <Link href="#">
-                        <a>Brand</a>
-                      </Link>
-                      <Link href="#">
-                        <a>Website</a>
-                      </Link>
-                      <Link href="#">
-                        <a>Internal</a>
-                      </Link>
-                      <Link href="#">
-                        <a>Strategy</a>
-                      </Link>
-                      <Link href="#">
-                        <a>Brand</a>
-                      </Link>
-                      <Link href="#">
-                        <a>Mission</a>
-                      </Link>
-                    </div>
-                  </div>
+                 
+                 
                 </aside>
               </div>
             </div>
           </div>
         </section>
-
- <section
+        <section
           style={{
             backgroundImage: "url(images/background/bg5.jpg)",
             backgroundSize: "cover",
@@ -431,8 +310,11 @@ const filteredBlogs = blogs.filter((blog) => {
             </div>
           </div>
         </section>
-      </div>      <Footer />
-    </>
+      </div>
+      <Footer />
+    </BlogProvider>
+     
+  
   );
 }
 

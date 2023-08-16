@@ -37,7 +37,7 @@ function ClientSlider() {
   const settings = {
     dots: false,
     infinite: true,
-    slidesToShow: 6,
+    slidesToShow: 5,
     slidesToScroll: 1,
     autoplay: true, // Enable auto-sliding
     autoplaySpeed: 2000, // Set the slide duration in milliseconds (optional)

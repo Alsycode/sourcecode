@@ -63,6 +63,21 @@ function BlogSlider() {
         fetchNewsData();
     }, []); // Fetch data on component mount
 
+    const truncateText = (text, maxLength) => {
+        if (text.length <= maxLength) {
+          return text;
+        }
+    
+        const trimmedText = text.slice(0, maxLength);
+        const lastSpaceIndex = trimmedText.lastIndexOf(" ");
+    
+        if (lastSpaceIndex === -1) {
+          return trimmedText + "...";
+        }
+    
+        return trimmedText.slice(0, lastSpaceIndex) + "...";
+      };
+    
     const renderArrows = () => {
         // Your arrow rendering logic...
     };
@@ -89,15 +104,16 @@ function BlogSlider() {
                                             <a>{news.attributes.heading}</a>
                                         </Link>
                                     </h5>
-                                    <p className="m-b0" >
-                                        {news.attributes.explaination}
-                                    </p>
+                                    <div className='h-400'><p className="m-b0 " >
+                                    {truncateText(news.attributes.explaination, 150)} 
+                                    </p></div>
+                                    
                                     {/* Assuming you have 'publishedAt', 'comments', and social media share links in 'news.attributes' */}
                                     <div className="dlab-meta meta-bottom">
                                         <ul>
                                             <li className="post-date">
                                                 <i className="flaticon-clock m-r10"></i>
-                                                {news.attributes.publishedAt}
+                                               
                                             </li>
                                             <li className="post-comment">
                                                 <a href="#">

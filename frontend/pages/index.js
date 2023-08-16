@@ -15,13 +15,19 @@ import Quote from "../element/quote";
 import Cta from "../element/cta";
 import Footer from "../layout/footer";
 import Header from "../layout/header";
+import Contactus from "../component/contactus";
+import { BlogProvider } from '../component/BlogContext'
+import MailchimpFormContainer from "../component/mailChimpFormContainer";
+ import { GHSProvider } from '../component/contextProvider';
+import Products from "../component/products"
 function Home() {
   useEffect(() => {
     document.querySelector("body").setAttribute("color", "color_1");
   }, []);
   return (
     <>
-	<Header />
+    <GHSProvider>
+    <Header />
 	  <div className="page-content bg-white" id="top">
         <Slider1 />
         <Clients />
@@ -33,14 +39,19 @@ function Home() {
         <Newsletter />
         <Team />
         <Pricing />
+        <Products/>
         <Testimonial />
+        <MailchimpFormContainer/>
         <Blog />
-        <Quote />
+     <Quote/>
+     
         <Cta />
 	  { /* 
 	  */}
       </div>
 	  <Footer />
+    </GHSProvider>
+	
     </>
   );
 }

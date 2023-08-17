@@ -4,19 +4,17 @@ import React from 'react';
 const PrimaryCTAButton = props => {
 
     return (
-      
-<Link href='/contact-us-1'>
-  <a
-    className={`primaryBtn 
-      ${props.size === 'big' ? "primaryBtn--big" : "primaryBtn--normal"}
-      ${props.icon ? "primaryBtn--grid" : null}
-      ${props.customClass}`}
-    onClick={props.handleClick}
-  >
-    {props.icon && props.icon}
-    {props.label}
-  </a>
-</Link>
+        <button
+            className={`primaryBtn 
+            ${props.size === 'big' ? "primaryBtn--big" : "primaryBtn--normal"}
+            ${props.icon ? "primaryBtn--grid" : null}
+            ${props.customClass}`}
+            onClick={props.handleClick}
+        >
+            {props.icon && props.icon}
+            {props.label}
+        </button>
+
 
     );
 }

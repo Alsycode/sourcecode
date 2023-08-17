@@ -41,7 +41,7 @@ function Home() {
         <Pricing />
         <Products/>
         <Testimonial />
-        <MailchimpFormContainer/>
+     
         <Blog />
      <Quote/>
      

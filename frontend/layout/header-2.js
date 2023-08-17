@@ -92,7 +92,7 @@ function Header2() {
                                     </Link>
                                 </div>
 
-                                <ul className="nav navbar-nav navbar">
+                                <ul className="nav navbar-nav navbar border-none">
                                     <li
                                         className={`${
                                             open === "home" ? "open" : ""

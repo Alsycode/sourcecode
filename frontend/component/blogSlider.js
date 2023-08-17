@@ -101,10 +101,10 @@ function BlogSlider() {
                                 <div className="dlab-info">
                                     <h5 className="dlab-title">
                                         <Link href={`/blog-details/${news.id}`}>
-                                            <a>{news.attributes.heading}</a>
+                                            <a className='text-3xl '>{news.attributes.heading}</a>
                                         </Link>
                                     </h5>
-                                    <div className='h-400'><p className="m-b0 " >
+                                    <div className='h-400 b'><p className="m-b0 " >
                                     {truncateText(news.attributes.explaination, 150)} 
                                     </p></div>
                                     
